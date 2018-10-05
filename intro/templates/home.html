@@ -1,0 +1,19 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+<h1>Home</h1>
+
+{% block content %}
+{% if user.is_authenticated %}
+  <div class="row">
+	<div class="col-2"></div>
+	<div class="col-8">
+		Hi <b>{{ user.first_name }}</b>, welcome back to the SKEA Django Intro codebase.
+		<a href="{% url 'todos' %}">Explore outstanding Todos</a> or <a href="{% url 'create todo' %}">create a new one.</a>
+	</div>
+	<div class="col-2"></div>
+  </div>
+
+
+{% endif %}
+{% endblock %}

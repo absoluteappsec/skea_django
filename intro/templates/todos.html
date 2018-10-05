@@ -1,0 +1,31 @@
+<!-- templates/todos.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+	<div class="col-3"></div>
+	<div class="col-6 text-center">
+	  <a href="/intro/todo/">Add a Todo</a> | <a href="/intro/todos/completed/">Completed Todos</a>
+	</div>
+	<div class="col-3"></div>
+</div>
+
+<div class="row">
+  <div class="col-3"></div>
+  <div class="col-6">
+  {% if user.is_authenticated %}
+    {% if todos %}
+	  <div class="list-group">
+	  {% for t in todos %}
+	    <a class="list-group-item list-group-item-action" href="/intro/{{ t.id }}/">{{ t.todo_text }}</a></li>
+	  {% endfor %}
+	  </div>
+    {% endif %}
+  {% else %}
+    <p>Please log in to view</p>
+  {% endif %}
+  </div>
+  <div class="col-3"></div>
+</div>
+
+{% endblock %}
