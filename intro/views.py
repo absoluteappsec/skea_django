@@ -7,13 +7,16 @@ from django.views import generic
 from .forms import TodoUserCreationForm, TodoForm
 from .models import Todo
 
+import logging
+logger = logging.getLogger('django')
+
 # Create your views here.
 def index(request):
 	return HttpResponse("Welcome to Seth & Ken's Excellent Adventures (in Code Review). Party on, dudes!")
 
 @login_required
 def todo(request, todo_id):
-	if request.method == 'GET': 
+	if request.method == 'GET':
 		try:
 			todo = Todo.objects.get(pk=todo_id,owner=request.user)
 			form = TodoForm(initial={'todo_text':todo.todo_text,
@@ -21,6 +24,8 @@ def todo(request, todo_id):
 									 'completed':todo.completed})
 		except Todo.DoesNotExist:
 			raise Http404("Todo does not exist")
+		
+		logger.info("GET todo %s by %s" % (todo_id,request.user.username))
 		return render(request, "todo_update.html", {'todo': todo, 'form': form} )
 	elif request.method == 'POST':
 		form = TodoForm(request.POST)
@@ -29,11 +34,13 @@ def todo(request, todo_id):
 				todo = Todo.objects.get(pk=todo_id,owner=request.user)
 			except Todo.DoesNotExist:
 				raise Http404("Todo does not exist")
-			
+
 			todo.todo_text = form.cleaned_data['todo_text']
 			todo.todo_date = form.cleaned_data['todo_date']
 			todo.completed = form.cleaned_data['completed']
 			todo.save()
+			
+			logger.info("Updated todo %s by %s" % (todo_id,request.user.username))
 
 	return HttpResponseRedirect('/intro/todos/')
 
@@ -47,25 +54,27 @@ def create_todo(request):
 					  completed = form.cleaned_data['completed'])
 			t.owner = request.user
 			t.save()
+			logger.info("Created todo %s by %s" % (todo_id,request.user.username))
 			return HttpResponseRedirect('/intro/todos/')
-		
+
 	else:
 		form = TodoForm()
-		
+
 	return render(request,'todo.html',{'form': form})
 
 @login_required
 def todos(request):
 	todos = Todo.objects.filter(completed=False,owner=request.user)
+	logger.info("GET todos by %s" % (request.user.username))
 	return render(request,'todos.html',{'todos': todos})
 
 @login_required
 def todos_completed(request):
 	todos = Todo.objects.filter(completed=True,owner=request.user)
+	logger.info("GET completed todos by %s" % (request.user.username))
 	return render(request,'todos.html',{'todos': todos})
 
 class SignUp(generic.CreateView):
 	form_class = TodoUserCreationForm
 	success_url = reverse_lazy('login')
 	template_name = 'signup.html'
-	
