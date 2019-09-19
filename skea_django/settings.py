@@ -146,7 +146,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'info.log',
-            'formatter': 'verbose'
+            'formatter': 'simple'
         },
     },
     'loggers': {
