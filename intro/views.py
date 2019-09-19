@@ -24,14 +24,14 @@ def todo(request, todo_id):
 									 'completed':todo.completed})
 		except Todo.DoesNotExist:
 			raise Http404("Todo does not exist")
-		
+
 		logger.info("GET todo %s by %s" % (todo_id,request.user.username))
 		return render(request, "todo_update.html", {'todo': todo, 'form': form} )
 	elif request.method == 'POST':
 		form = TodoForm(request.POST)
 		if form.is_valid():
 			try:
-				todo = Todo.objects.get(pk=todo_id,owner=request.user)
+				todo = Todo.objects.get(pk=todo_id)
 			except Todo.DoesNotExist:
 				raise Http404("Todo does not exist")
 
@@ -39,7 +39,7 @@ def todo(request, todo_id):
 			todo.todo_date = form.cleaned_data['todo_date']
 			todo.completed = form.cleaned_data['completed']
 			todo.save()
-			
+
 			logger.info("Updated todo %s by %s" % (todo_id,request.user.username))
 
 	return HttpResponseRedirect('/intro/todos/')
