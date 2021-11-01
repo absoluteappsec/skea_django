@@ -54,7 +54,7 @@ def create_todo(request):
 					  completed = form.cleaned_data['completed'])
 			t.owner = request.user
 			t.save()
-			logger.info("Created todo %s by %s" % (todo_id,request.user.username))
+			logger.info("Created todo %s by %s" % (t.id,request.user.username))
 			return HttpResponseRedirect('/intro/todos/')
 
 	else:
